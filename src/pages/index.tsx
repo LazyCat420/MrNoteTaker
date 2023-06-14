@@ -4,7 +4,7 @@ import { useState } from 'react'
 export default function index() {
     const [myList, setMyList] = useState([]);
     const [inputValue, setInputValue] = useState('test');
-    const [editIndex, setEditIndex] = useState(-1);
+    const [editIndex, setEditIndex] = useState();
 
 
     function handleChange(event) {
@@ -30,11 +30,11 @@ export default function index() {
         setMyList(updatedList);
     }
 
-    function editItem(index, text) {
+    function saveEditItem(index, text) {
       const updatedList = [...myList];
       updatedList[index] = text;
       setMyList(updatedList);
-      setEditIndex(-1);
+      setEditIndex();
     }
 
     return (
@@ -62,13 +62,13 @@ export default function index() {
               <form
                 onSubmit={(event) => {
                   event.preventDefault();
-                  editItem(index, event.target.elements[0].value);
+                  saveEditItem(index, event.target.elements[0].value);
                 }}
               >
                 <input type="text" defaultValue={item} />
                 <button
                   type="button"
-                  onClick={() => setEditIndex(-1)}
+                  onClick={() => setEditIndex()}
                   className="bg-gray-500 hover:bg-gray-700 text-black font-semibold py-2 px-4 rounded"
                 >
                   Cancel
