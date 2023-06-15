@@ -3,13 +3,14 @@ import { useState } from 'react'
 
 export default function index() {
     const [myList, setMyList] = useState([]);
+    const [favList, setFavList] = useState([]);
     const [inputValue, setInputValue] = useState('test');
     const [editIndex, setEditIndex] = useState();
 
 
     function handleChange(event) {
         setInputValue(event.target.value);
-    };
+    }
 
     function addItem(event){
        event.preventDefault();
@@ -18,12 +19,13 @@ export default function index() {
             alert("You must write something!");   
         }
         else{
+          if (!myList.includes(inputValue)) {
             const updatedList = [...myList, inputValue];
             setMyList(updatedList);
             setInputValue(''); 
-
+          }
         }
-    };
+    }
 
     function removeItem(item) {
         const updatedList = myList.filter((listItem) => listItem !== item);
@@ -36,6 +38,27 @@ export default function index() {
       setMyList(updatedList);
       setEditIndex();
     }
+
+    function addToFav(item) {
+      if (!favList.includes(item)) {
+        const updatedList = [...favList, item];
+        setFavList(updatedList);
+      }
+    }
+
+    function addFavToList(item) {
+      if (!myList.includes(item)) {
+        const updatedList = [...myList, item];
+        setMyList(updatedList);
+      }
+    }
+
+    function removeFavItem(item) {
+      const updatedList = favList.filter((listItem) => listItem !== item);
+      setFavList(updatedList);
+  }
+  
+
 
     return (
       <div>
@@ -95,11 +118,38 @@ export default function index() {
                 >
                   Delete
                 </button>
+                <button
+                  onClick={() => addToFav(item)}
+                  className="bg-green-500 hover:bg-blue-700 text-black font-semibold py-2 px-4 rounded"
+                >
+                  fav
+                </button>
               </>
             )}
           </li>
         ))}
       </ul>
+      <h2>My Fav List</h2>
+      <ul id="myUL">
+        {favList.map((item, index) => (
+          <li key={index}>
+                {item}
+                <button
+                  onClick={() => removeFavItem(item)}
+                  className="bg-blue-500 hover:bg-blue-700 text-black font-semibold py-2 px-4 rounded"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => addFavToList(item)}
+                  className="bg-green-500 hover:bg-green-700 text-black font-semibold py-2 px-4 rounded"
+                >
+                  add to list
+                </button>
+          </li>
+        ))}
+      </ul>
+              
     </div>
   );
 }
