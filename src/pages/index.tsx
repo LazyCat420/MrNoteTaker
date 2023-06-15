@@ -7,6 +7,7 @@ export default function index() {
     const [favList, setFavList] = useState([]);
     const [inputValue, setInputValue] = useState('test');
     const [editIndex, setEditIndex] = useState();
+    const [doneList, setDoneList] = useState([]);
 
 
     function handleChange(event) {
@@ -22,6 +23,10 @@ export default function index() {
         if (favList) {
             setFavList(JSON.parse(favList));
         }
+        const doneList = localStorage.getItem('done-list');
+        if (doneList) {
+            setDoneList(JSON.parse(doneList));
+        }
     }, []);
 
     function addItem(event){
@@ -32,7 +37,7 @@ export default function index() {
         }
         else{
           if (!myList.includes(inputValue)) {
-            const updatedList = [...myList, inputValue];
+            const updatedList = [...myList, {name:inputValue, date: new Date().toLocaleString()}];
             setMyList(updatedList);
             localStorage.setItem('myList', JSON.stringify(updatedList));
             setInputValue(''); 
@@ -41,7 +46,7 @@ export default function index() {
     }
 
     function removeItem(item) {
-        const updatedList = myList.filter((listItem) => listItem !== item);
+        const updatedList = myList.filter((listItem) => listItem.name !== item.name);
         setMyList(updatedList);
         localStorage.setItem('myList', JSON.stringify(updatedList));
     }
@@ -70,10 +75,28 @@ export default function index() {
     }
 
     function removeFavItem(item) {
-      const updatedList = favList.filter((listItem) => listItem !== item);
+      const updatedList = favList.filter((listItem) => listItem.name !== item.name);
       setFavList(updatedList);
       localStorage.setItem('fav-list', JSON.stringify(updatedList));
   }
+
+    function setToDone(item) {
+      console.log(item);
+      if (!doneList.includes(item)) {
+        const updatedList = [...doneList, item];
+        setDoneList(updatedList);
+        localStorage.setItem('done-list', JSON.stringify(updatedList));
+      }
+      removeItem(item);
+    }
+
+    function removeDoneItem(item) {
+      const updatedList = doneList.filter((listItem) => listItem.name !== item.name);
+      setDoneList(updatedList);
+      localStorage.setItem('done-list', JSON.stringify(updatedList));
+  }
+
+ 
   
 
 
@@ -95,7 +118,7 @@ export default function index() {
           <span className="counter">{myList.length}</span>
         </form>
       </div>
-      <ul id="myUL">
+      <ul>
         {myList.map((item, index) => (
           <li key={index}>
             {editIndex === index ? (
@@ -105,7 +128,7 @@ export default function index() {
                   saveEditItem(index, event.target.elements[0].value);
                 }}
               >
-                <input type="text" defaultValue={item} />
+                <input type="text" defaultValue={item.name} />
                 <button
                   type="button"
                   onClick={() => setEditIndex()}
@@ -122,7 +145,8 @@ export default function index() {
               </form>
             ) : (
               <>
-                {item}
+                {item.name}
+                {item.date}
                 <button
                   onClick={() => setEditIndex(index)}
                   className="bg-yellow-500 hover:bg-yellow-700 text-black font-semibold py-2 px-4 rounded"
@@ -141,16 +165,22 @@ export default function index() {
                 >
                   fav
                 </button>
+                <button
+                  onClick={() => setToDone(item)}
+                  className="bg-gray-500 hover:bg-gray-700 text-black font-semibold py-2 px-4 rounded"
+                >
+                  Done
+                </button>
               </>
             )}
           </li>
         ))}
       </ul>
       <h2>My Fav List</h2>
-      <ul id="myUL">
+      <ul>
         {favList.map((item, index) => (
           <li key={index}>
-                {item}
+                {item.name}
                 <button
                   onClick={() => removeFavItem(item)}
                   className="bg-blue-500 hover:bg-blue-700 text-black font-semibold py-2 px-4 rounded"
@@ -166,7 +196,20 @@ export default function index() {
           </li>
         ))}
       </ul>
-              
+      <h2>Done List</h2>
+      <ul>
+        {doneList.map((item, index) => (
+          <li key={index}>
+                {item.name}
+                <button
+                  onClick={() => removeDoneItem(item)}
+                  className="bg-blue-500 hover:bg-blue-700 text-black font-semibold py-2 px-4 rounded"
+                >
+                  Delete
+                </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
