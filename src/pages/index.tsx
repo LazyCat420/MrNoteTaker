@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 
 
-export default function index() {
+export default function Index() {
     const [myList, setMyList] = useState([]);
     const [favList, setFavList] = useState([]);
     const [inputValue, setInputValue] = useState('test');
