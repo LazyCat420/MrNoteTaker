@@ -1,5 +1,6 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+
 
 export default function index() {
     const [myList, setMyList] = useState([]);
@@ -12,6 +13,17 @@ export default function index() {
         setInputValue(event.target.value);
     }
 
+    useEffect(() => {
+        const list = localStorage.getItem('myList');
+        if (list) {
+            setMyList(JSON.parse(list));
+        }
+        const favList = localStorage.getItem('fav-list');
+        if (favList) {
+            setFavList(JSON.parse(favList));
+        }
+    }, []);
+
     function addItem(event){
        event.preventDefault();
 
@@ -22,6 +34,7 @@ export default function index() {
           if (!myList.includes(inputValue)) {
             const updatedList = [...myList, inputValue];
             setMyList(updatedList);
+            localStorage.setItem('myList', JSON.stringify(updatedList));
             setInputValue(''); 
           }
         }
@@ -30,12 +43,14 @@ export default function index() {
     function removeItem(item) {
         const updatedList = myList.filter((listItem) => listItem !== item);
         setMyList(updatedList);
+        localStorage.setItem('myList', JSON.stringify(updatedList));
     }
 
     function saveEditItem(index, text) {
       const updatedList = [...myList];
       updatedList[index] = text;
       setMyList(updatedList);
+      localStorage.setItem('myList', JSON.stringify(updatedList));
       setEditIndex();
     }
 
@@ -43,6 +58,7 @@ export default function index() {
       if (!favList.includes(item)) {
         const updatedList = [...favList, item];
         setFavList(updatedList);
+        localStorage.setItem('fav-list', JSON.stringify(updatedList));
       }
     }
 
@@ -56,6 +72,7 @@ export default function index() {
     function removeFavItem(item) {
       const updatedList = favList.filter((listItem) => listItem !== item);
       setFavList(updatedList);
+      localStorage.setItem('fav-list', JSON.stringify(updatedList));
   }
   
 
