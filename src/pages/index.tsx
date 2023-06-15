@@ -83,6 +83,7 @@ export default function index() {
     function setToDone(item) {
       console.log(item);
       if (!doneList.includes(item)) {
+        item.finishDate = new Date().toLocaleString();
         const updatedList = [...doneList, item];
         setDoneList(updatedList);
         localStorage.setItem('done-list', JSON.stringify(updatedList));
@@ -103,7 +104,6 @@ export default function index() {
     return (
       <div>
       <div id="myDIV" className="header">
-        <h2>My To Do List</h2>
         <form onSubmit={(event) => addItem(event)}>
           <input
             type="text"
@@ -115,8 +115,8 @@ export default function index() {
           <button className="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded">
             Add
           </button>
-          <span className="counter">{myList.length}</span>
         </form>
+        <h2>My To Do List ({myList.length})</h2>
       </div>
       <ul>
         {myList.map((item, index) => (
@@ -145,8 +145,8 @@ export default function index() {
               </form>
             ) : (
               <>
-                {item.name}
-                {item.date}
+                <span className="name">{item.name}</span>
+                <span>{item.date}</span>
                 <button
                   onClick={() => setEditIndex(index)}
                   className="bg-yellow-500 hover:bg-yellow-700 text-black font-semibold py-2 px-4 rounded"
@@ -176,7 +176,7 @@ export default function index() {
           </li>
         ))}
       </ul>
-      <h2>My Fav List</h2>
+      <h2>My Fav List ({favList.length})</h2>
       <ul>
         {favList.map((item, index) => (
           <li key={index}>
@@ -196,16 +196,23 @@ export default function index() {
           </li>
         ))}
       </ul>
-      <h2>Done List</h2>
+      <h2>Done List ({doneList.length})</h2>
       <ul>
         {doneList.map((item, index) => (
           <li key={index}>
-                {item.name}
+               <span className="name">{item.name}</span>
+                <span>{item.finishDate}</span>
                 <button
                   onClick={() => removeDoneItem(item)}
                   className="bg-blue-500 hover:bg-blue-700 text-black font-semibold py-2 px-4 rounded"
                 >
                   Delete
+                </button>
+                <button
+                  onClick={() => addToFav(item)}
+                  className="bg-green-500 hover:bg-blue-700 text-black font-semibold py-2 px-4 rounded"
+                >
+                  fav
                 </button>
           </li>
         ))}
