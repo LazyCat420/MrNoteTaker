@@ -18,18 +18,18 @@ export default function Index() {
 
    
     useEffect(() => {
-      const list = localStorage.getItem('myList');
-      if (list) {
-        setMyList(JSON.parse(list));
-      }
-      const favList = localStorage.getItem('fav-list');
-      if (favList) {
-        setFavList(JSON.parse(favList));
-      }
-      const doneList = localStorage.getItem('done-list');
-      if (doneList) {
-        setDoneList(JSON.parse(doneList));
-      }
+      // const list = localStorage.getItem('myList');
+      // if (list) {
+      //   setMyList(JSON.parse(list));
+      // }
+      // const favList = localStorage.getItem('fav-list');
+      // if (favList) {
+      //   setFavList(JSON.parse(favList));
+      // }
+      // const doneList = localStorage.getItem('done-list');
+      // if (doneList) {
+      //   setDoneList(JSON.parse(doneList));
+      // }
     
       const formData = new FormData();
       fetch('http://localhost:3000/url', {
@@ -38,22 +38,47 @@ export default function Index() {
       })
       .then(response => response.json())
       .then(data => {
-        console.log(data);
-        setMyList(data);   
+        const list = localStorage.getItem('myList');
+        if (list) {
+          setMyList(JSON.parse(list));
+        }
+        const favList = localStorage.getItem('fav-list');
+        if (favList) {
+          setFavList(JSON.parse(favList));
+        }
+        const doneList = localStorage.getItem('done-list');
+        if (doneList) {
+          setDoneList(JSON.parse(doneList));
+        }
+        data.forEach((item) => {
+        addAPIItem(item.name, item.date);
+        });  
       }) 
-      var interval = setInterval(function(str1, str2) {
-        const formData = new FormData();
-        fetch('http://localhost:3000/url', {
-          method: 'POST',
-          body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log(data);
-          setMyList(data);   
-        }) 
-           }, 8640000, "Hello.", "How are you?");
+      // var interval = setInterval(function(str1, str2) {
+      //   const formData = new FormData();
+      //   fetch('http://localhost:3000/url', {
+      //     method: 'POST',
+      //     body: formData
+      //   })
+      //   .then(response => response.json())
+      //   .then(data => {
+      //     console.log(data);
+      //     // setMyList(data); 
+      //     data.forEach((item) => {
+      //     console.log(score);
+      //   });  
+      //   }) 
+      //      }, 8640000, "Hello.", "How are you?");
     }, []);
+    
+    function addAPIItem(name, date){
+      console.log(myList);
+      if (!myList.includes(name)) {
+        const updatedList = [...myList, {name:name, date:date}];
+        setMyList(prevList => [...prevList, {name:name, date:date}]);
+        // localStorage.setItem('myList', JSON.stringify(updatedList));
+      }
+    }
 
     function addItem(event){
        event.preventDefault();
@@ -64,7 +89,7 @@ export default function Index() {
         else{
           if (!myList.includes(inputValue)) {
             const updatedList = [...myList, {name:inputValue, date: new Date().toLocaleString()}];
-            setMyList(updatedList);
+            setMyList(updatedList => [...updatedList, {name:inputValue, date: new Date().toLocaleString()}]);
             console.log(myList);
             localStorage.setItem('myList', JSON.stringify(updatedList));
             setInputValue(''); 
