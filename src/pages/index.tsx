@@ -9,24 +9,50 @@ export default function Index() {
     const [editIndex, setEditIndex] = useState();
     const [doneList, setDoneList] = useState([]);
 
+    
+
 
     function handleChange(event) {
         setInputValue(event.target.value);
     }
 
+   
     useEffect(() => {
-        const list = localStorage.getItem('myList');
-        if (list) {
-            setMyList(JSON.parse(list));
-        }
-        const favList = localStorage.getItem('fav-list');
-        if (favList) {
-            setFavList(JSON.parse(favList));
-        }
-        const doneList = localStorage.getItem('done-list');
-        if (doneList) {
-            setDoneList(JSON.parse(doneList));
-        }
+      const list = localStorage.getItem('myList');
+      if (list) {
+        setMyList(JSON.parse(list));
+      }
+      const favList = localStorage.getItem('fav-list');
+      if (favList) {
+        setFavList(JSON.parse(favList));
+      }
+      const doneList = localStorage.getItem('done-list');
+      if (doneList) {
+        setDoneList(JSON.parse(doneList));
+      }
+    
+      const formData = new FormData();
+      fetch('http://localhost:3000/url', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        setMyList(data);   
+      }) 
+      var interval = setInterval(function(str1, str2) {
+        const formData = new FormData();
+        fetch('http://localhost:3000/url', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          setMyList(data);   
+        }) 
+           }, 8640000, "Hello.", "How are you?");
     }, []);
 
     function addItem(event){
@@ -39,6 +65,7 @@ export default function Index() {
           if (!myList.includes(inputValue)) {
             const updatedList = [...myList, {name:inputValue, date: new Date().toLocaleString()}];
             setMyList(updatedList);
+            console.log(myList);
             localStorage.setItem('myList', JSON.stringify(updatedList));
             setInputValue(''); 
           }
