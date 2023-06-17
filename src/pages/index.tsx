@@ -1,6 +1,4 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
-
+import React, { useState, useEffect } from 'react';
 
 export default function Index() {
     const [myList, setMyList] = useState([]);
@@ -8,93 +6,60 @@ export default function Index() {
     const [inputValue, setInputValue] = useState('test');
     const [editIndex, setEditIndex] = useState();
     const [doneList, setDoneList] = useState([]);
-
-    
-
+    const [customInput, setCustomInput] = useState('');
 
     function handleChange(event) {
         setInputValue(event.target.value);
+        setCustomInput(event.target.value); // Update the local state variable with the user input value
     }
-
    
     useEffect(() => {
-      // const list = localStorage.getItem('myList');
-      // if (list) {
-      //   setMyList(JSON.parse(list));
-      // }
-      // const favList = localStorage.getItem('fav-list');
-      // if (favList) {
-      //   setFavList(JSON.parse(favList));
-      // }
-      // const doneList = localStorage.getItem('done-list');
-      // if (doneList) {
-      //   setDoneList(JSON.parse(doneList));
-      // }
-    
-      const formData = new FormData();
-      fetch('http://localhost:3000/url', {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        const list = localStorage.getItem('myList');
-        if (list) {
-          setMyList(JSON.parse(list));
+        // Fetch data from the backend
+        fetch('http://localhost:3000/url', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                // Parse the stored list from local storage
+                const storedList = localStorage.getItem('myList');
+                let combinedList = storedList ? JSON.parse(storedList) : [];
+                // Combine API data with local storage data
+                data.forEach(item => {
+                    if (!combinedList.some(listItem => listItem.name === item.name)) {
+                        combinedList.push({ name: item.name, date: item.date });
+                    }
+                });
+                // Set the combined data to myList state
+                setMyList(combinedList);
+                // Store the combined data to local storage
+                localStorage.setItem('myList', JSON.stringify(combinedList));
+            })
+            .catch(error => console.error(error));
+
+        const storedFavList = localStorage.getItem('fav-list');
+        if (storedFavList) {
+            setFavList(JSON.parse(storedFavList));
         }
-        const favList = localStorage.getItem('fav-list');
-        if (favList) {
-          setFavList(JSON.parse(favList));
+
+        const storedDoneList = localStorage.getItem('done-list');
+        if (storedDoneList) {
+            setDoneList(JSON.parse(storedDoneList));
         }
-        const doneList = localStorage.getItem('done-list');
-        if (doneList) {
-          setDoneList(JSON.parse(doneList));
-        }
-        data.forEach((item) => {
-        addAPIItem(item.name, item.date);
-        });  
-      }) 
-      // var interval = setInterval(function(str1, str2) {
-      //   const formData = new FormData();
-      //   fetch('http://localhost:3000/url', {
-      //     method: 'POST',
-      //     body: formData
-      //   })
-      //   .then(response => response.json())
-      //   .then(data => {
-      //     console.log(data);
-      //     // setMyList(data); 
-      //     data.forEach((item) => {
-      //     console.log(score);
-      //   });  
-      //   }) 
-      //      }, 8640000, "Hello.", "How are you?");
+
     }, []);
-    
-    function addAPIItem(name, date){
-      console.log(myList);
-      if (!myList.includes(name)) {
-        const updatedList = [...myList, {name:name, date:date}];
-        setMyList(prevList => [...prevList, {name:name, date:date}]);
-        // localStorage.setItem('myList', JSON.stringify(updatedList));
-      }
+
+    function formatDate(date) {
+        return new Date(date).toLocaleString();
     }
 
-    function addItem(event){
-       event.preventDefault();
-
-        if (inputValue === '') {
-            alert("You must write something!");   
+    function addItem(event) {
+        event.preventDefault();
+        if (customInput.trim().length === 0) {
+            return;
         }
-        else{
-          if (!myList.includes(inputValue)) {
-            const updatedList = [...myList, {name:inputValue, date: new Date().toLocaleString()}];
-            setMyList(updatedList => [...updatedList, {name:inputValue, date: new Date().toLocaleString()}]);
-            console.log(myList);
-            localStorage.setItem('myList', JSON.stringify(updatedList));
-            setInputValue(''); 
-          }
-        }
+        const newItem = { name: customInput.trim(), date: formatDate(new Date()) };
+        const updatedList = [...myList, newItem];
+        setMyList(updatedList);
+        localStorage.setItem('myList', JSON.stringify(updatedList)); // Store the updated list to local storage
+        setCustomInput('');
     }
 
     function removeItem(item) {
@@ -105,7 +70,8 @@ export default function Index() {
 
     function saveEditItem(index, text) {
       const updatedList = [...myList];
-      updatedList[index] = text;
+      updatedList[index].name = text.name;
+      updatedList[index].date = text.date;
       setMyList(updatedList);
       localStorage.setItem('myList', JSON.stringify(updatedList));
       setEditIndex();
@@ -135,8 +101,8 @@ export default function Index() {
     function setToDone(item) {
       console.log(item);
       if (!doneList.includes(item)) {
-        item.finishDate = new Date().toLocaleString();
-        const updatedList = [...doneList, item];
+        const doneItem = { name: item.name, date: item.date, finishDate: new Date().toLocaleString() };
+        const updatedList = [...doneList, doneItem ];
         setDoneList(updatedList);
         localStorage.setItem('done-list', JSON.stringify(updatedList));
       }
@@ -148,10 +114,6 @@ export default function Index() {
       setDoneList(updatedList);
       localStorage.setItem('done-list', JSON.stringify(updatedList));
   }
-
- 
-  
-
 
     return (
       <div>
