@@ -15,7 +15,7 @@ export default function Index() {
 
     useEffect(() => {
         // Fetch data from the backend
-        fetch('http://localhost:3000/url', { method: 'POST' })
+        fetch('http://localhost:3001/url', { method: 'POST' })
             .then(response => response.json())
             .then(data => {
                 // Parse the stored list from local storage
