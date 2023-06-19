@@ -6,6 +6,8 @@ export default createBoard({
     name: 'Index',
     Board: () => <Index />,
     environmentProps: {
-        canvasBackgroundColor: '#ffffff'
+        canvasBackgroundColor: '#ffffff',
+        windowWidth: 466,
+        windowHeight: 851
     }
 });

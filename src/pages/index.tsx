@@ -120,6 +120,7 @@ export default function Index() {
             <div>
                 <h1>Smart List</h1>
             </div>
+            <h1>Heading 1</h1>
             <div id="myDIV" className="header">
                 <form onSubmit={(event) => addItem(event)}>
                     <input
